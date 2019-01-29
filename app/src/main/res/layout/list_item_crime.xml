@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:padding="8dp"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginTop="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
 
-    <TextView android:layout_width="match_parent"
+    <TextView android:layout_width="349dp"
               android:layout_height="wrap_content"
               android:text="Crime Title"
-              android:id="@+id/crime_title"/>
+              android:id="@+id/crime_title"
+              app:layout_constraintTop_toTopOf="parent"
+              android:layout_marginStart="8dp"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toStartOf="@+id/solved_view"/>
 
-    <TextView android:layout_width="match_parent"
+    <TextView android:layout_width="349dp"
               android:layout_height="wrap_content"
               android:text="Crime Date"
-              android:id="@+id/crime_date"/>
+              android:id="@+id/crime_date"
+              app:layout_constraintTop_toBottomOf="@+id/crime_title"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              android:layout_marginStart="8dp"
+              app:layout_constraintEnd_toStartOf="@+id/solved_view"/>
 
-</LinearLayout>
+    <ImageView android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:src="@drawable/ic_solved"
+               android:id="@+id/solved_view"
+               tools:layout_editor_absoluteY="8dp"
+               app:layout_constraintEnd_toEndOf="parent"
+               android:layout_marginEnd="8dp"/>
+
+</android.support.constraint.ConstraintLayout>

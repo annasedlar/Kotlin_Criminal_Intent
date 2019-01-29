@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import Crime
-import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
@@ -23,12 +23,14 @@ class CrimeListFragment : Fragment() {
         private val dateTextView: TextView
         private lateinit var crime: Crime
         private var contactPoliceButton: Button? = null
+        private var solvedImageView: ImageView? = null
 
         init {
             itemView.setOnClickListener(this)
             titleTextView = itemView.findViewById(R.id.crime_title)
             dateTextView = itemView.findViewById(R.id.crime_date)
             contactPoliceButton = itemView.findViewById(R.id.call_police_button)
+            solvedImageView = itemView.findViewById(R.id.solved_view)
         }
 
         fun bind(crime: Crime) {
@@ -38,6 +40,11 @@ class CrimeListFragment : Fragment() {
             contactPoliceButton?.setOnClickListener{
                 contactPoliceButton!!.text = "Dial 911"
                 contactPoliceButton!!.width = 150
+            }
+            solvedImageView?.visibility = if (crime.isSolved) {
+                View.VISIBLE
+            } else {
+                View.INVISIBLE
             }
         }
 
@@ -78,7 +85,6 @@ class CrimeListFragment : Fragment() {
             }
         }
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
