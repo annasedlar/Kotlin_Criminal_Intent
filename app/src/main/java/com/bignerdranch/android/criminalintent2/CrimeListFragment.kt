@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import Crime
-import android.support.v4.content.ContextCompat.startActivity
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -51,7 +49,7 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View?) {
-            val intent = CrimeActivity.newIntent(requireContext(), crime.id)
+            val intent = CrimePagerActivity.newIntent(requireContext(), crime.id)
             startActivity(intent)
             itemUpdated = adapterPosition
         }

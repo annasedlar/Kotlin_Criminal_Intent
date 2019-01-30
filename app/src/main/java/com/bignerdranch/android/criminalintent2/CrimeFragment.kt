@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import Crime
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -20,11 +21,16 @@ class CrimeFragment : Fragment() {
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
     private lateinit var solvedCheckBox: CheckBox
+    private lateinit var firstButton: Button
+    private lateinit var lastButton: Button
+    private lateinit var crimeList: List<Crime>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crime = CrimeLab.get().getCrime(crimeId) ?: Crime()
+        val crimeLab = CrimeLab.get()
+        crimeList = crimeLab.getCrimes()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -34,6 +40,19 @@ class CrimeFragment : Fragment() {
         titleField = view.findViewById(R.id.crime_title) as EditText
         dateButton = view.findViewById(R.id.crime_date) as Button
         solvedCheckBox = view.findViewById(R.id.crime_solved) as CheckBox
+        firstButton = view.findViewById(R.id.first_button)
+        lastButton = view.findViewById(R.id.last_button)
+
+        firstButton.setOnClickListener {
+            val intent = CrimePagerActivity.newIntent(requireContext(), crimeList[0].id)
+            startActivity(intent)
+        }
+
+        lastButton.setOnClickListener {
+            val lastIndex = crimeList.lastIndex
+            val intent = CrimePagerActivity.newIntent(requireContext(), crimeList[lastIndex].id )
+            startActivity(intent)
+        }
 
         val titleWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
