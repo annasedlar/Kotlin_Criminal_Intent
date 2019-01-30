@@ -8,20 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import Crime
+import android.support.v4.content.ContextCompat.startActivity
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 
 class CrimeListFragment : Fragment() {
 
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = null
+    private var itemUpdated : Int = 0
 
     private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         private val titleTextView: TextView
         private val dateTextView: TextView
-        private lateinit var crime: Crime
+        lateinit var crime: Crime
         private var contactPoliceButton: Button? = null
         private var solvedImageView: ImageView? = null
 
@@ -37,7 +39,7 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
             dateTextView.text = this.crime.date.toString()
-            contactPoliceButton?.setOnClickListener{
+            contactPoliceButton?.setOnClickListener {
                 contactPoliceButton!!.text = "Dial 911"
                 contactPoliceButton!!.width = 150
             }
@@ -49,20 +51,22 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View?) {
-            Toast.makeText(context, "${crime.title} clicked!", Toast.LENGTH_SHORT).show()
+            val intent = CrimeActivity.newIntent(requireContext(), crime.id)
+            startActivity(intent)
+            itemUpdated = adapterPosition
         }
     }
 
     private inner class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
 
-        val crimeItemNormal : Int = 0
-        val crimeItemSerious : Int = 1
+        val crimeItemNormal: Int = 0
+        val crimeItemSerious: Int = 1
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(context)
             var view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
 
-            if( viewType == 1) {
+            if (viewType == 1) {
                 view = layoutInflater.inflate(R.layout.list_item_crime_serious, parent, false)
             }
             return CrimeHolder(view)
@@ -78,7 +82,7 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun getItemViewType(position: Int): Int {
-            return if( position % 3 != 0 ) {
+            return if (position % 3 != 0) {
                 crimeItemNormal
             } else {
                 crimeItemSerious
@@ -97,12 +101,21 @@ class CrimeListFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
     private fun updateUI() {
         val crimeLab = CrimeLab.get()
         val crimes = crimeLab.getCrimes()
-
-        adapter = CrimeAdapter(crimes)
-        crimeRecyclerView.adapter = adapter
+        adapter?.let {
+            it.crimes = crimes
+            it.notifyItemChanged(itemUpdated)
+        } ?: run {
+            adapter = CrimeAdapter(crimes)
+            crimeRecyclerView.adapter = adapter
+        }
     }
 
 }
