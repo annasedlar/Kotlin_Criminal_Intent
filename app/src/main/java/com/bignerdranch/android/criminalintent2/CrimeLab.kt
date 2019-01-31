@@ -10,7 +10,7 @@ class CrimeLab private constructor(context: Context) {
     private val crimes = mutableListOf<Crime>()
 
     init {
-        for (i in 0 until 100) {
+        for (i in 0 until 9) {
             val crime = Crime()
             crime.title = "Crime #$i"
             crime.isSolved = i % 2 == 0
@@ -28,6 +28,9 @@ class CrimeLab private constructor(context: Context) {
         }
     }
 
+    fun addCrime(crime: Crime) {
+        crimes.add(crime)
+    }
 
     companion object {
         fun initialize(context: Context) {

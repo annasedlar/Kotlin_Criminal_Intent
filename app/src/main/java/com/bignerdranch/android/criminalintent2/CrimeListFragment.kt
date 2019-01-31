@@ -4,10 +4,9 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import Crime
+import android.support.v7.app.AppCompatActivity
+import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,7 +15,8 @@ class CrimeListFragment : Fragment() {
 
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = null
-    private var itemUpdated : Int = 0
+    private var itemUpdated: Int = 0
+    private var subtitleVisible = false
 
     private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         private val titleTextView: TextView
@@ -88,6 +88,11 @@ class CrimeListFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
@@ -102,6 +107,49 @@ class CrimeListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         updateUI()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+
+        val subtitleItem = menu?.findItem(R.id.show_subtitle)
+        subtitleItem?.title = if(subtitleVisible) {
+            getString(R.string.hide_subtitle)
+        } else {
+            getString(R.string.show_subtitle)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.new_crime -> {
+                val crime = Crime()
+                CrimeLab.get().addCrime(crime)
+                val intent = CrimePagerActivity.newIntent(requireContext(), crime.id)
+                startActivity(intent)
+                true
+            }
+            R.id.show_subtitle -> {
+                subtitleVisible =! subtitleVisible
+                activity?.invalidateOptionsMenu()
+                updateSubtitle()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun updateSubtitle() {
+        val crimeCount = CrimeLab.get().getCrimes().size
+        var subtitle = if (subtitleVisible) {
+            getString(R.string.subtitle_format, crimeCount)
+        } else {
+            ""
+        }
+
+        val activity = activity as AppCompatActivity
+        activity.supportActionBar?.subtitle = subtitle
     }
 
     private fun updateUI() {
